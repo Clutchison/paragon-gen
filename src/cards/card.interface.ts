@@ -3,6 +3,7 @@ import { String, Record, Number } from 'runtypes';
 import { Type } from "./type.interface";
 import { Version } from "./version.interface";
 
+// Here is a comment.
 export const CardRecord = Record({
   name: String,
   // hpMax: Number.withConstraint(n => n >= HPProps.min && n <= HPProps.max),
@@ -11,6 +12,7 @@ export const CardRecord = Record({
   // senses: SenseRecord.optional(),
 });
 
+// Here is another one.
 export type Card = {
   name: string;
   cost?: number;
