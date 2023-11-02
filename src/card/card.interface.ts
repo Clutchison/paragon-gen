@@ -27,7 +27,6 @@ interface CardModelInterface extends mongoose.Model<CardDoc> {
   build(card: Card): CardDoc;
 }
 
-
 const cardSchema = new mongoose.Schema({
   cardId: {
     type: Number,

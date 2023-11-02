@@ -42,66 +42,10 @@ const deleteById = async (id: string | undefined): Promise<CardDocWithId | null>
 
 const idIsValid = mongoose.Types.ObjectId.isValid;
 
-const test = async () => {
-  const cards = await getAll();
-  log(cards, 'Existing Cards');
-
-  const ids = cards.length > 0 ? cards.map(c => c.cardId) : [-1];
-  const newCardId = Math.max(...ids) + 1;
-  const newCard = dummyCard(newCardId);
-  log(newCard, 'New Card');
-
-  const savedCard = await create(newCard);
-  log(savedCard, 'Saved Card');
-
-  const gotCard = await getById(savedCard.id);
-  log(gotCard, 'Got Card');
-
-  const cardToUpdate = {
-    ...dummyCard(newCardId),
-    name: 'Updated Name',
-  };
-  log(cardToUpdate, 'Card to Update');
-
-  const updatedCard = await update(cardToUpdate, gotCard?.id || -1);
-  log(updatedCard, 'Updated Card');
-
-  const deletedCard = await deleteById(updatedCard?.id || -1);
-  log(deletedCard, 'Deleted Card');
-
-  const newCards = await getAll();
-  log(newCards, 'New Cards');
-}
-
-const log = (obj: any, title: any) => {
-  console.log('-----' + title + '-----');
-  console.log(JSON.stringify(obj));
-}
-
-const dummyCard = (id: number): Card => {
-  return {
-    cardId: id,
-    name: 'testName',
-    type: 'creature',
-    art: 'testArt',
-    version: new Version(),
-  }
-}
-
-
-const card: Card = {
-  cardId: 0,
-  name: 'testName',
-  type: 'creature',
-  art: 'testArt',
-  version: new Version(),
-};
-
 export default {
   create,
   getAll,
   getById,
   update,
   deleteById,
-  test,
 }
