@@ -1,24 +1,15 @@
 import mongoose from "mongoose";
-import { String, Record, Number } from 'runtypes';
-import { Type } from "./type.interface";
+import { Type, TYPE } from "./type.interface";
 import { Version } from "./version.interface";
+import { CardRecord } from "./card.record";
 
-// Here is a comment.
-export const CardRecord = Record({
-  name: String,
-  // hpMax: Number.withConstraint(n => n >= HPProps.min && n <= HPProps.max),
-  // hpCurrent: Number.withConstraint(n => n >= 0 && n <= HPProps.max),
-  // stats: StatsRecord,
-  // senses: SenseRecord.optional(),
-});
-
-// Here is another one.
 export type Card = {
+  cardId: number;
   name: string;
   cost?: number;
   type: Type;
   subtype?: string;
-  text: string;
+  text?: string;
   zd?: number;
   bp?: number;
   con?: number;
@@ -36,115 +27,82 @@ interface CardModelInterface extends mongoose.Model<CardDoc> {
   build(card: Card): CardDoc;
 }
 
+
 const cardSchema = new mongoose.Schema({
+  cardId: {
+    type: Number,
+    required: true,
+    unique: false,
+  },
   name: {
     type: String,
     required: true,
-    unique: true,
+    unique: false,
   },
-  description: {
-    type: String,
+  cost: {
+    type: Number,
     required: false,
+    unique: false,
   },
-  // size: {
-  //   type: String,
-  //   enum: Object.values(SIZE),
-  //   required: false,
-  // },
   type: {
     type: String,
-    required: false,
+    enum: Object.keys(TYPE),
+    required: true,
+    unique: false,
   },
-  // alignment: {
-  //   type: String,
-  //   enum: Object.values(ALIGNMENT),
-  //   required: false,
-  // },
-  // ac: {
-  //   type: Number,
-  //   min: ACProps.min,
-  //   max: ACProps.max,
-  //   required: false,
-  // },
-  // hpMax: {
-  //   type: Number,
-  //   min: 0,
-  //   max: HPProps.max,
-  //   required: true,
-  // },
-  // hpCurrent: {
-  //   type: Number,
-  //   min: HPProps.min,
-  //   max: HPProps.max,
-  //   required: true,
-  // },
-  // hpTemp: {
-  //   type: Number,
-  //   min: 0,
-  //   max: HPProps.max,
-  //   required: false,
-  // },
-  // speed: {
-  //   type: Number,
-  //   min: SpeedConfig.min,
-  //   max: SpeedConfig.max,
-  //   required: false,
-  // },
-  // stats: {
-  //   type: statsSchema,
-  //   required: true
-  // },
-  // skills: {
-  //   type: [String],
-  //   enum: Object.values(SKILL),
-  //   required: false,
-  // },
-  // vulnerabilities: {
-  //   type: String,
-  //   required: false,
-  // },
-  // resistances: {
-  //   type: String,
-  //   required: false,
-  // },
-  // immunities: {
-  //   type: String,
-  //   required: false,
-  // },
-  // senses: {
-  //   type: senseRangesSchema,
-  //   required: false,
-  // },
-  // languages: {
-  //   type: [String],
-  //   required: false,
-  // },
-  // cr: {
-  //   type: String,
-  //   enum: Object.values(CHALLENGE_RATING),
-  //   required: false,
-  // },
+  subtype: {
+    type: String,
+    required: false,
+    unique: false,
+  },
+  text: {
+    type: String,
+    required: false,
+    unique: false,
+  },
+  zd: {
+    type: Number,
+    required: false,
+    unique: false,
+  },
+  bp: {
+    type: Number,
+    required: false,
+    unique: false,
+  },
+  con: {
+    type: Number,
+    required: false,
+    unique: false,
+  },
+  art: {
+    type: String,
+    required: true,
+    unique: false,
+  },
+  token: {
+    type: Boolean,
+    required: false,
+    unique: false,
+  },
+  version: {
+    type: String,
+    required: true,
+    unique: false,
+  },
 }, { optimisticConcurrency: true });
+
+cardSchema.index({ cardId: 1, version: 1 }, { unique: true });
 
 cardSchema.pre('save', function(next) {
   this.increment();
-  // this.languages = [...new Set(this.languages)];
-  // this.skills = [...new Set(this.skills)];
   return next();
 });
 
 cardSchema.pre('validate', function(next) {
-  // if (this.hpCurrent > this.hpMax) {
-  //   next(new InvalidCardError(
-  //     'Current HP (' + this.hpCurrent + ')' +
-  //     ' cannot be higher than Max HP (' + this.hpMax + ')'));
-  // } else {
-  //   next();
-  // }
   next();
 });
 
 cardSchema.statics.build = (attr: Card) => { return new CardModel(attr) };
-export const CardModel = mongoose.model<CardDoc, CardModelInterface>('monster', cardSchema);
+export const CardModel = mongoose.model<CardDoc, CardModelInterface>('card', cardSchema);
 CardModel.record = CardRecord;
-

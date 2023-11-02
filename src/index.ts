@@ -6,6 +6,10 @@ import { MongoClient } from 'mongodb';
 
 // Routers
 import { itemsRouter } from './items/items.router';
+import { Card, CardModel } from './cards/card.interface';
+import mongoose from 'mongoose';
+import { Version } from './cards/version.interface';
+import cardsService from './cards/cards.service';
 
 dotenv.config();
 
@@ -16,10 +20,9 @@ if (!process.env.PORT) {
 const PORT: number = parseInt(process.env.PORT as string, 10);
 
 const url = 'mongodb://172.29.224.1:27017/paragon';
-MongoClient.connect(url).then((_: MongoClient) => {
+// MongoClient.connect(url).then((_: MongoClient) => {
+mongoose.connect(url).then(res => {
   console.log('Connected to db');
-}).catch(err => {
-  throw Error(err);
 });
 
 const app = express();
@@ -33,3 +36,4 @@ app.use('/api/menu/items', itemsRouter);
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
+
