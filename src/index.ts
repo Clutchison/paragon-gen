@@ -2,14 +2,10 @@ import * as dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import { MongoClient } from 'mongodb';
+import mongoose from 'mongoose';
 
 // Routers
-import { itemsRouter } from './items/items.router';
-import { Card, CardModel } from './cards/card.interface';
-import mongoose from 'mongoose';
-import { Version } from './cards/version.interface';
-import cardsService from './cards/cards.service';
+import { CardRouter } from './cards/card.router';
 
 dotenv.config();
 
@@ -20,8 +16,7 @@ if (!process.env.PORT) {
 const PORT: number = parseInt(process.env.PORT as string, 10);
 
 const url = 'mongodb://172.29.224.1:27017/paragon';
-// MongoClient.connect(url).then((_: MongoClient) => {
-mongoose.connect(url).then(res => {
+mongoose.connect(url).then(_ => {
   console.log('Connected to db');
 });
 
@@ -31,7 +26,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/menu/items', itemsRouter);
+app.use('/api/card', CardRouter.instance().router);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
