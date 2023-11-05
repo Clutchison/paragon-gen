@@ -1,7 +1,6 @@
 import { Card, CardDoc, CardModel } from "./card.interface";
 import mongoose, { Types } from 'mongoose';
 import InvalidIdError from "../common/errs/InvalidIdError";
-import { Version } from "./version.interface";
 
 type CardDocWithId = (CardDoc & {
   _id: Types.ObjectId;
